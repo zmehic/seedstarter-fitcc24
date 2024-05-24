@@ -1,0 +1,321 @@
+﻿@page "/TempStat/{number:int}"
+@using FireSharp.Config
+@using FireSharp.Interfaces
+@using FireSharp.Response
+@using Newtonsoft.Json
+@using static SeedStarter.Pages.Statistics;
+<nav class="navbar fixed-top navbar-expand navbar-light" style="background-color: rgb(6,187,100); height:65px" aria-label="Second navbar example">
+    <div class="container-fluid" style=" width:100%; height:50px">
+
+        <div class="collapse navbar-collapse" id="navbarsExample02" style="width:100%; display:flex; justify-content:center; align-content:center;">
+            <div style="width:100%; height:100%; ">
+                <div style="height:60px; width:100%; display:flex; align-items:center;">
+                    <div style="height:100%; display:flex; align-items:center">
+                        <img src="images\statistic.png" style="width:30px; height:30px;" />
+                        <label style="color:white; margin-left:10px;"> Statistics</label>
+                    </div>
+
+                    <div style=" margin-left:auto">
+                        <img src="images\logo.png" style="width:30px; height:30px;" />
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</nav>
+
+<div class="container" style="width:100%; margin-bottom:75px">
+
+    <label style="margin-left:20px; font-weight:700">Temperature stats</label>
+    
+    <div style="margin-top:50px; margin-left:20px;">
+        <label>Average: </label>
+        <label style="color:rgb(6,187,100)"><b>@values.Average @values.Mesurement</b></label>
+    </div>
+    
+    <div style="height:100%; display:flex;justify-content:center; margin-top:20px;">
+        <div style="max-height:100%; max-width:100%; border-radius:30px; background-color:white;border:solid 2px green">
+            <ApexChart @ref="chart" TItem="IStanje"
+                       Title=@values.Naziv
+                       Width="350"
+                       Height="350"
+                       Options="options"
+                       >
+
+                <ApexPointSeries TItem="IStanje"
+                                 Items="odabranaStatistika"
+                                 Name=@values.Naziv
+                                 SeriesType="SeriesType.Line"
+                                 XValue="@(e => e.datum.ToShortTimeString())"
+                                 YValue="@(e => e.vrijednost)"
+                                  />
+
+
+            </ApexChart>
+        </div>
+    </div>
+
+    <div  style="width:100%;height:70px;  display:inline-flex; justify-content:center; margin-top:20px">
+        <div style="width:70px; background-color:rgb(6,187,100); height:100%; border-radius:50%; display:flex; justify-content:center; align-items:center">
+            <img @onclick="Lijevo" src="images\leftarrow.png" style="max-height:85%; max-width:80%; cursor:pointer" />
+        </div>
+        <div style="width:250px; height:100%; display:flex; justify-content:center; align-items:center">
+            <label>@values.DatumOd - @values.DatumDo</label>
+        </div>
+        <div style="width:70px; background-color:rgb(6,187,100); height:100%; border-radius:50%; display:flex; justify-content:center; align-items:center">
+            <img @onclick="Desno" src="images\rightarrow.png" style="max-height:85%; max-width:80%; cursor:pointer" />
+        </div>
+    </div>
+</div>
+@code {
+
+    [Parameter]
+    public int Number { get; set; }
+
+    IFirebaseConfig configg;
+
+    private List<StanjeTemperature> Data { get; set; }
+    private List<StanjeTemperature> Data2 { get; set; } = new();
+    private ApexChart<IStanje> chart;
+    private ApexChartOptions<IStanje> options;
+
+    DateTime datum1 = new DateTime(2024, 1, 1);
+    DateTime datum2 = new DateTime(2024, 1, 2);
+    DateTime datum3 = new DateTime(2024, 1, 3);
+    DateTime datum4 = new DateTime(2024, 1, 4);
+    DateTime datum5 = new DateTime(2024, 1, 5);
+    DateTime datum6 = new DateTime(2024, 1, 6);
+    DateTime datum7 = new DateTime(2024, 1, 7);
+    DateTime datum8 = new DateTime(2024, 1, 8);
+    DateTime datum9 = new DateTime(2024, 1, 9);
+    DateTime datum10 = new DateTime(2024, 1, 10);
+
+    public class Hourly
+    {
+        public string DateTime { get; set; }
+        public int Humidity { get; set; }
+        public int SoilHumidity { get; set; }
+        public int Temp { get; set; }
+    }
+
+    public interface IStanje
+    {
+        public int vrijednost { get; set; }
+        public DateTime datum { get; set; }
+
+    }
+
+    public class TempStats
+    {
+        public string Naziv{ get; set; }
+        public string Mesurement{ get; set; }
+        public float Average { get; set; }
+        public string DatumOd{ get; set; }
+        public string DatumDo{ get; set; }
+    }
+
+    TempStats values;
+
+    public static List<TempStats> listaInfo = new List<TempStats>(){
+        new TempStats(){Average=22, DatumOd=new DateOnly(2023,11,20).ToShortDateString(), DatumDo= new DateOnly(2023,11,25).ToShortDateString()},
+        new TempStats(){Average=25,  DatumOd=new DateOnly(2023,11,26).ToShortDateString(), DatumDo= new DateOnly(2023,12,1).ToShortDateString()}
+
+    };
+
+
+    Dictionary<int, List<StanjeTemperature>> temperatura = new Dictionary<int, List<StanjeTemperature>>();
+    List<IStanje> odabranaStatistika = new List<IStanje>();
+
+    private Dictionary<string, Hourly> DataSet { get; set; } = new();
+    Dictionary<int,List<IStanje>> varijable = new Dictionary<int,List<IStanje>>();
+    int i;
+
+    void GetData()
+    {
+        FirebaseResponse res = client.Get("Hourly");
+        DataSet = JsonConvert.DeserializeObject<Dictionary<string, Hourly>>(res.Body.ToString());
+    }
+
+
+    Task StartupOne()
+    {
+        configg = new FirebaseConfig()
+            {
+                AuthSecret = "9kYvaeMdIRNFA0WmoNqyCv4rBapIGyCDOptrQIyF",
+                BasePath = "https://seedstarter-f9b21-default-rtdb.europe-west1.firebasedatabase.app/"
+            };
+
+        return Task.CompletedTask;
+    }
+    IFirebaseClient client;
+    Task StartupTwo()
+    {
+        client = new FireSharp.FirebaseClient(configg);
+        GetData();
+
+        varijable.Add(1, new List<IStanje>());
+        varijable.Add(2, new List<IStanje>());
+        varijable.Add(3, new List<IStanje>());
+
+
+        foreach (var item in DataSet)
+        {
+            varijable[1].Add(new StanjeTemperature { vrijednost=item.Value.Temp, datum=DateTimeFix(item.Value.DateTime)});
+            varijable[2].Add(new StanjeVlaznostiTla { vrijednost = item.Value.SoilHumidity, datum = DateTimeFix(item.Value.DateTime) });
+            varijable[3].Add(new StanjeVlaznostiZraka { vrijednost = item.Value.SoilHumidity, datum = DateTimeFix(item.Value.DateTime) });
+        }
+
+        return Task.CompletedTask;
+    }
+
+    DateTime DateTimeFix(string date)
+    {
+
+        // Remove both sets of double quotes
+        date = date.Trim('"');
+
+        // Parse the remaining string into a DateTime object
+        DateTime dateTime = DateTime.Parse(date);
+
+        return dateTime;
+    }
+    int index = 0;
+    int window = 5;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        await StartupOne();
+        await StartupTwo();
+
+
+
+
+
+        i = varijable[Number].Count-1;
+        options = new ApexCharts.ApexChartOptions<IStanje>();
+
+        values = new TempStats
+            {
+                Naziv = "",
+                Average = 0,
+                DatumDo = "",
+                DatumOd = "",
+                Mesurement = ""
+            };
+
+        if (Number == 1 && varijable[1].Count>0)
+        {
+            odabranaStatistika = varijable[1].Skip(index).Take(window).ToList();
+            values.Naziv = "Temperatura °C";
+            values.Mesurement = "°C";
+            values.Average = IzracunajProsjek();
+            values.DatumOd = (odabranaStatistika[0].datum).ToShortTimeString().ToString();
+            values.DatumDo = (odabranaStatistika[odabranaStatistika.Count - 1].datum).ToShortTimeString().ToString();
+
+        }
+        else if (Number == 2 && varijable[1].Count > 0 )
+        {
+            odabranaStatistika = varijable[2].Skip(index).Take(window).ToList();
+            values.Naziv = "Soil humidity";
+            values.Mesurement = "%";
+            values.Average = IzracunajProsjek();
+            values.DatumOd = (odabranaStatistika[0].datum).ToShortTimeString().ToString();
+            values.DatumDo = (odabranaStatistika[odabranaStatistika.Count - 1].datum).ToShortTimeString().ToString();
+        }
+        else if (Number == 3 && varijable[1].Count > 0)
+        {
+            odabranaStatistika = varijable[3].Skip(index).Take(window).ToList();
+            values.Naziv = "Air humidity";
+            values.Mesurement = "%";
+            values.Average = IzracunajProsjek();
+            values.DatumOd = (odabranaStatistika[0].datum).ToShortTimeString().ToString();
+            values.DatumDo = (odabranaStatistika[odabranaStatistika.Count - 1].datum).ToShortTimeString().ToString();
+        }
+
+
+
+        options.Title = new Title
+            {
+                OffsetX = 20,
+                OffsetY = 10,
+                Style = new TitleStyle { FontSize = "20px" }
+            };
+
+
+
+        options.Chart = new Chart
+            {
+                Toolbar = new Toolbar
+                {
+                    Show = false
+                },
+                Width = 350,
+                Height=350
+
+
+            };
+
+
+        options.Colors = new List<string> { "#06bb64" };
+        options.Xaxis = new XAxis
+            {
+                Title = new AxisTitle
+                {
+                    OffsetY = 5,
+                    Text = "Time",
+                    Style = new AxisTitleStyle { FontSize = "14px", Color = "lightgrey" }
+                },
+                AxisBorder = new AxisBorder
+                {
+                    Height = 2
+                },
+                Labels = new XAxisLabels { Rotate = -90, Style = new AxisLabelStyle { FontSize = "10px" } }
+            };
+        options.Yaxis = new List<YAxis>();
+        options.Yaxis.Add(new YAxis
+            {
+                DecimalsInFloat = 0,
+                Labels = new YAxisLabels { Rotate = -45, Style = new AxisLabelStyle { FontSize = "10px" } },
+                Title = new AxisTitle { Text = $"Value {values.Mesurement}", Style = new AxisTitleStyle { FontSize = "14px", Color = "lightgrey" } }
+            });
+
+    }
+
+    public async Task Lijevo()
+    {
+        index = Math.Max(0, index - window);
+        odabranaStatistika = varijable[Number].Skip(index).Take(window).ToList();
+        values.DatumOd = (odabranaStatistika[0].datum).ToShortTimeString().ToString();
+        values.DatumDo = (odabranaStatistika[odabranaStatistika.Count - 1].datum).ToShortTimeString().ToString();
+        values.Average = IzracunajProsjek();
+        await chart.UpdateSeriesAsync(true);
+        return;
+    }
+
+    public async Task Desno()
+    {
+        index = Math.Min(varijable[Number].Count - window, index + window);
+        odabranaStatistika = varijable[Number].Skip(index).Take(window).ToList();
+        values.DatumOd = (odabranaStatistika[0].datum).ToShortTimeString().ToString();
+        values.DatumDo = (odabranaStatistika[odabranaStatistika.Count - 1].datum).ToShortTimeString().ToString();
+        values.Average = IzracunajProsjek();
+        await chart.UpdateSeriesAsync(true);
+        return;
+    }
+
+    private float IzracunajProsjek()
+    {
+        var prosjek = 0.0f;
+        foreach ( IStanje stanje in odabranaStatistika)
+        {
+            prosjek += stanje.vrijednost;
+        }
+
+        return prosjek / odabranaStatistika.Count;
+    }
+
+}

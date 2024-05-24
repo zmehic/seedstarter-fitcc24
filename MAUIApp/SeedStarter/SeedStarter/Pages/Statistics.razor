@@ -1,0 +1,368 @@
+﻿
+
+
+@page "/Statistics"
+@using FireSharp.Config
+@using FireSharp.Interfaces
+@using FireSharp.Response
+@using MudBlazor
+@using Newtonsoft.Json
+@using static SeedStarter.Pages.TemperatureStatistics;
+@inject NavigationManager navigationManager
+
+<div>
+    <nav class="navbar fixed-top navbar-expand navbar-light" style="background-color: rgb(6,187,100); height:65px" aria-label="Second navbar example">
+        <div class="container-fluid" style=" width:100%; height:50px">
+
+            <div class="collapse navbar-collapse" id="navbarsExample02" style="width:100%; display:flex; justify-content:center; align-content:center;">
+                <div style="width:100%; height:100%; ">
+                    <div style="height:60px; width:100%; display:flex; align-items:center;">
+
+                        <div style="height:100%; display:flex; align-items:center">
+                            <img src="images\statistic.png" style="width:30px; height:30px;" />
+                            <label style="color:white; margin-left:10px;"> Statistics</label>
+                        </div>
+
+                        <div style=" margin-left:auto">
+                            <img src="images\logo.png" style="width:30px; height:30px;" />
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </nav>
+</div>
+
+<MudSwipeArea OnSwipeEnd="Chng" Style="width: 100%; height: 100%; margin-bottom:50px" Sensitivity="125">
+    <div class="container" style="width:100% ; background-color:rgba(237,237,237)">
+    <div style="width:100%;height: 20px; margin-bottom:10px">
+        <label style="font-size:larger"><b>Key parameter statistics</b></label>
+    </div>
+        <div class="row row-cols-1 row-cols-md-2 g-4" style="margin-top:20px; background-color:rgba(237,237,237)">
+        <div class="col" style="height:100%; display:flex;justify-content:center">
+            <div class="" style="height:100%;width:100%; display:flex;justify-content:center">
+                <div @onclick="()=>OtvoriStatistiku(1)">
+                    <div style="max-height:100%; max-width:100%; border-radius:30px; background-color:white;border:solid 2px green">
+                        <ApexChart TItem="StanjeTemperature"
+                                   Title="Temperature °C"
+                                   Width="350"
+                                   Height="350"
+                                   Options="options">
+
+                            <ApexPointSeries TItem="StanjeTemperature"
+                                             Items="Data"
+                                             Name="Temperature"
+                                             SeriesType="SeriesType.Line"
+                                             XValue="@(e => e.datum.ToShortTimeString())"
+                                             YValue="@(e => e.vrijednost)"
+                                             
+                                              />
+
+                            
+                        </ApexChart>
+                    </div>
+                </div>
+                
+
+            </div>
+        </div>
+        <div class="col" style="height:100%; display:flex;justify-content:center">
+            <div class="" style="height:100%;width:100%; display:flex;justify-content:center">
+                <div @onclick="()=>OtvoriStatistiku(2)">
+                    <div style="max-height:100%; max-width:100%; border-radius:30px; background-color:white;border:solid 2px green">
+                        <ApexChart TItem="StanjeVlaznostiTla"
+                                   Title="Soil humidity °C"
+                                   Width="350"
+                                   Height="350"
+                                   Options="options2">
+
+                            <ApexPointSeries TItem="StanjeVlaznostiTla"
+                                             Items="Data2"
+                                             Name="Soil humidity"
+                                             SeriesType="SeriesType.Line"
+                                             XValue="@(e => e.datum.ToShortTimeString())"
+                                             YValue="@(e => e.vrijednost)"
+                                             />
+
+
+                        </ApexChart>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col" style="height:100%; display:flex;justify-content:center">
+            <div class="" style="height:100%;width:100%; display:flex;justify-content:center">
+                <div @onclick="()=>OtvoriStatistiku(3)">
+                    <div style="max-height:100%; max-width:100%; border-radius:30px; background-color:white;border:solid 2px green">
+                        <ApexChart TItem="StanjeVlaznostiZraka"
+                                   Title="Air humidity %"
+                                   Width="350"
+                                   Height="350"
+                                   Options="options3">
+
+                            <ApexPointSeries TItem="StanjeVlaznostiZraka"
+                                             Items="Data3"
+                                             Name="Air humidity"
+                                             SeriesType="SeriesType.Line"
+                                             XValue="@(e => e.datum.ToShortTimeString())"
+                                             YValue="@(e => e.vrijednost)"
+                                              />
+
+
+                        </ApexChart>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+
+    </div>
+</div>
+</MudSwipeArea>
+
+
+@code {
+
+
+    IFirebaseConfig configg;
+
+    private void Chng(SwipeEventArgs a)
+    {
+        if (a.SwipeDirection.ToString() == "RightToLeft")
+        {
+            navigationManager.NavigateTo("/Settings");
+        }
+        else if (a.SwipeDirection.ToString() == "LeftToRight")
+        {
+            navigationManager.NavigateTo("/Monitor");
+        }
+    }
+
+    public class Hourly
+    {
+        public string DateTime { get; set; }
+        public int Humidity{ get; set; }
+        public int SoilHumidity{ get; set; }
+        public int Temp{ get; set; }
+    }
+    public class StatisticsData
+    {
+
+    }
+
+    private List<StanjeTemperature> Data { get; set; } = new();
+    private List<StanjeVlaznostiTla> Data2 { get; set; } = new();
+    private List<StanjeVlaznostiZraka> Data3 { get; set; } = new();
+    private Dictionary<string, Hourly> DataSet { get; set; } = new();
+    private ApexChartOptions<StanjeTemperature> options = new ApexCharts.ApexChartOptions<StanjeTemperature>();
+    private ApexChartOptions<StanjeVlaznostiTla> options2 = new ApexCharts.ApexChartOptions<StanjeVlaznostiTla>();
+    private ApexChartOptions<StanjeVlaznostiZraka> options3 = new ApexCharts.ApexChartOptions<StanjeVlaznostiZraka>();
+
+    public class StanjeTemperature:IStanje
+    {
+        public int vrijednost { get; set; }
+        public DateTime datum { get; set; }
+    }
+    public class StanjeVlaznostiTla : IStanje
+    {
+        public int vrijednost { get; set; }
+        public DateTime datum { get; set; }
+    }
+    public class StanjeVlaznostiZraka : IStanje
+    {
+        public int vrijednost { get; set; }
+        public DateTime datum { get; set; }
+    }
+
+    private void OtvoriStatistiku(int number)
+    {
+        navigationManager.NavigateTo("/TempStat/"+number);
+    }
+
+    void GetDataSet()
+    {
+        FirebaseResponse res = client.Get("Hourly");
+        DataSet = JsonConvert.DeserializeObject<Dictionary<string, Hourly>>(res.Body.ToString());
+
+
+    }
+
+    Task StartupOne()
+    {
+        configg = new FirebaseConfig()
+            {
+                AuthSecret = "9kYvaeMdIRNFA0WmoNqyCv4rBapIGyCDOptrQIyF",
+                BasePath = "https://seedstarter-f9b21-default-rtdb.europe-west1.firebasedatabase.app/"
+            };
+
+        return Task.CompletedTask;
+    }
+    IFirebaseClient client;
+
+    DateTime DateTimeFix(string date)
+    {
+
+        // Remove both sets of double quotes
+        date = date.Trim('"');
+
+        // Parse the remaining string into a DateTime object
+        DateTime dateTime = DateTime.Parse(date);
+
+        return dateTime;
+    }
+
+    Task StartupTwo()
+    {
+        client = new FireSharp.FirebaseClient(configg);
+        GetDataSet();
+
+        int counter = 0;
+        foreach (var item in DataSet)
+        {
+            if(counter>4)
+            {
+                counter = 0;
+                break;
+            }
+
+            Data.Add(new StanjeTemperature { datum = DateTimeFix(item.Value.DateTime), vrijednost = item.Value.Temp });
+            Data2.Add(new StanjeVlaznostiTla { datum = DateTimeFix(item.Value.DateTime), vrijednost = item.Value.SoilHumidity });
+            Data3.Add(new StanjeVlaznostiZraka { datum = DateTimeFix(item.Value.DateTime), vrijednost = item.Value.Humidity });
+
+
+            counter++;
+        }
+
+
+        options.Title = new Title
+            {
+                OffsetX = 20,
+                OffsetY = 10,
+                Style = new TitleStyle { FontSize = "20px" }
+            };
+
+        options.Chart = new Chart
+            {
+                Toolbar = new Toolbar
+                {
+                    Show = false
+                }
+            };
+        options.Colors = new List<string> { "#06bb64" };
+        options.Xaxis = new XAxis
+            {
+                Title = new AxisTitle
+                {
+                    OffsetY = 5,
+                    Text = "Time",
+                    Style = new AxisTitleStyle { FontSize = "14px", Color = "lightgrey" }
+                },
+                AxisBorder = new AxisBorder
+                {
+                    Height = 2
+                },
+                Labels = new XAxisLabels { Rotate = -90, Style = new AxisLabelStyle { FontSize = "10px" } }
+            };
+        options.Yaxis = new List<YAxis>();
+        options.Yaxis.Add(new YAxis
+            {
+                DecimalsInFloat = 0,
+                Labels = new YAxisLabels { Rotate = -45, Style = new AxisLabelStyle { FontSize = "10px" } },
+                Title = new AxisTitle { Text = "Value °C", Style = new AxisTitleStyle { FontSize = "14px", Color = "lightgrey" } }
+            });
+
+
+
+        options2.Title = new Title
+            {
+                OffsetX = 20,
+                OffsetY = 10,
+                Style = new TitleStyle { FontSize = "20px" }
+            };
+
+        options2.Chart = new Chart
+            {
+                Toolbar = new Toolbar
+                {
+                    Show = false
+                }
+            };
+        options2.Colors = new List<string> { "#06bb64" };
+        options2.Xaxis = new XAxis
+            {
+                Title = new AxisTitle
+                {
+                    OffsetY = 5,
+                    Text = "Time",
+                    Style = new AxisTitleStyle { FontSize = "14px", Color = "lightgrey" }
+                },
+                AxisBorder = new AxisBorder
+                {
+                    Height = 2
+                },
+                Labels = new XAxisLabels { Rotate = -90, Style = new AxisLabelStyle { FontSize = "10px" } }
+            };
+        options2.Yaxis = new List<YAxis>();
+        options2.Yaxis.Add(new YAxis
+            {
+                DecimalsInFloat = 0,
+                Labels = new YAxisLabels { Rotate = -45, Style = new AxisLabelStyle { FontSize = "10px" } },
+                Title = new AxisTitle { Text = "Value %", Style = new AxisTitleStyle { FontSize = "14px", Color = "lightgrey" } }
+            });
+
+
+        options3.Title = new Title
+            {
+                OffsetX = 20,
+                OffsetY = 10,
+                Style = new TitleStyle { FontSize = "20px" }
+            };
+
+        options3.Chart = new Chart
+            {
+                Toolbar = new Toolbar
+                {
+                    Show = false
+                }
+            };
+        options3.Colors = new List<string> { "#06bb64" };
+        options3.Xaxis = new XAxis
+            {
+                Title = new AxisTitle
+                {
+                    OffsetY = 5,
+                    Text = "Time",
+                    Style = new AxisTitleStyle { FontSize = "14px", Color = "lightgrey" }
+                },
+                AxisBorder = new AxisBorder
+                {
+                    Height = 2
+                },
+                Labels = new XAxisLabels { Rotate = 0, Style = new AxisLabelStyle { FontSize = "10px" } }
+            };
+        options3.Yaxis = new List<YAxis>();
+        options3.Yaxis.Add(new YAxis
+            {
+                DecimalsInFloat = 0,
+                Labels = new YAxisLabels { Rotate = -45, Style = new AxisLabelStyle { FontSize = "10px" } },
+                Title = new AxisTitle { Text = "Value %", Style = new AxisTitleStyle { FontSize = "14px", Color = "lightgrey" } }
+            });
+
+        return Task.CompletedTask;
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await StartupOne();
+        await StartupTwo();
+        
+    }
+}
+   
+
+   

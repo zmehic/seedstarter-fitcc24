@@ -1,0 +1,60 @@
+﻿@inject NavigationManager navigationManager
+
+
+<nav class="navbar fixed-bottom navbar-expand navbar-light" style="background-color: rgb(6,187,100); height:70px" aria-label="Second navbar example">
+    <div class="container-fluid" style="">
+
+        <div class="collapse navbar-collapse" id="navbarsExample02" style=" display:flex; justify-content:center; align-content:center">
+            <div style="width:100%; height:100%">
+                <ul class="navbar-nav me-auto" style="display:flex; justify-content:center; align-content:center;">
+                    <li class="nav-item" style="margin-right:45px">
+                        <div @onclick="()=>OnClick(1)">
+                            <img src="images\home.png" width="30" height="30" />
+                        </div>
+                    </li>
+                    <li class="nav-item" style="margin-right:45px">
+                        <div @onclick="()=>OnClick(2)">
+                            <img src="images\monitor.png" width="30" height="30" />
+                        </div>
+                    </li>
+                    <li class="nav-item" style="margin-right:45px">
+                        <div @onclick="()=>OnClick(3)">
+                            <img src="images\statistic.png" width="30" height="30" />
+                        </div>
+                    </li>
+                    <li class="nav-item" style="">
+                        <div @onclick="()=>OnClick(4)">
+                        <img src="images\settings.png" width="30" height="30" />
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+            
+        </div>
+    </div>
+</nav>
+
+@code{
+    private void OnClick(int number)
+    {
+        if(number==1)
+        {
+            navigationManager.NavigateTo("/");
+        }
+        else if(number==2)
+        {
+            navigationManager.NavigateTo("/Monitor");
+        }
+        else if (number == 3)
+        {
+            navigationManager.NavigateTo("/Statistics");
+        }
+        else if (number == 4)
+        {
+            navigationManager.NavigateTo("/Settings");
+            
+        }
+
+    }
+}

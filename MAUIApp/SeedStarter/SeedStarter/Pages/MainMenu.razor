@@ -1,0 +1,359 @@
+﻿
+@page "/"
+@inject NavigationManager navigationManager
+@using MudBlazor
+@using System.Text.Json
+@using Newtonsoft.Json
+@using SeedStarter.Data
+@using FireSharp.Config;
+@using FireSharp.Response;
+@using FireSharp.Interfaces;
+
+<div>
+    <nav class="navbar fixed-top navbar-expand navbar-light" style="background-color: rgb(6,187,100); height:65px" aria-label="Second navbar example">
+        <div class="container-fluid" style=" width:100%; height:50px">
+
+            <div class="collapse navbar-collapse" id="navbarsExample02" style="width:100%; display:flex; justify-content:center; align-content:center;">
+                <div style="width:100%; height:100%; ">
+                    <div style="height:60px; width:100%; display:flex; align-items:center;">
+                        <div style="height:100%; display:flex; align-items:center">
+                            <img src="images\home.png" style="width:30px; height:30px;" />
+                            <label style="color:white; margin-left:10px;"> Home</label>
+                        </div>
+
+                        <div style=" margin-left:auto">
+                            <img src="images\logo.png" style="width:30px; height:30px;" />
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </nav>
+</div>
+
+<MudSwipeArea OnSwipeEnd="Chng" Style="width: 100%; height: 100%" Sensitivity="125">
+
+    <div class="container body" style="width:100%; height:100%; margin-bottom:70px; background-color:rgba(237,237,237);">
+        <div class="row row-cols-1 row-cols-md-2 g-4" style=" background-color:rgba(237,237,237)">
+        <div class="col">
+            <div class="card-border-radius " style="border:solid 2px green">
+                <div style="margin-left:10px">
+                    <div>
+                        <img src="images\temperature.png" style="height:30px" />
+                        <label>Temperature</label>
+                        <label style="color:red; font-weight:600">@tempValue °C</label>
+                    </div>
+                    <div hidden="@(Manual)">
+                            <label style="color:rgb(0, 206, 209); margin-left:10px;">Recommended temperature: @currentCrop.Temp °C</label>
+                    </div>
+
+                </div>
+
+                <div style="width:70px; height:40px;  margin-left:auto; margin-right:10px">
+                    <div hidden="@SemiAuto" class="form-check form-switch" style="width:100%;height:100%;">
+                            <input disabled="@Auto" style="width:65px; height:30px" class=" form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked="@TempSwitch" @onchange="()=>Switch(!TempSwitch, WaterSwitch, MistSwitch, LightSwitch, FanSwitch)">
+
+                    </div>
+                    <div hidden="@(!SemiAuto)"  class="form-group" style="width:100%;height:100%;">
+
+                            <input value="@SemiTemp" onchange="@((ChangeEventArgs e)=>@Promjena(Int32.Parse(e.Value.ToString()),SemiSoilHumidity,SemiHumidity))" type="number" class="form-control" id="formGroupExampleInput">
+                    </div>
+                </div>
+
+            </div>
+            
+        </div>
+        <div class="col">
+            <div class="card-border-radius " style="border:solid 2px green">
+                <div style="margin-left:10px">
+                    <img src="images\light.png" style="height:30px" />
+                    <label>Lights</label>
+                </div>
+
+                <div style="width:70px; height:40px;  margin-left:auto; margin-right:10px">
+                    <div class="form-check form-switch" style="width:100%;height:100%;">
+                            <input disabled="@Auto || @SemiAuto" style="width:65px; height:30px" class=" form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked="@LightSwitch" @onchange="()=>Switch(TempSwitch, WaterSwitch, MistSwitch, !LightSwitch, FanSwitch)">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card-border-radius " style="border:solid 2px green">
+                <div style="margin-left:10px">
+                    <div>
+                        <img src="images\soil.png" style="height:30px" />
+                        <label>Soil humidity</label>
+                        <label style="color:red; font-weight:600">@soilHumidity %</label>
+                    </div>
+                    
+
+                    <div hidden="@(Manual)">
+                            <label style="color:rgb(0, 206, 209); margin-left:10px;">Recomended soil humidity: @currentCrop.SoilHumidity %</label>
+                    </div>
+                </div>
+
+                <div style="width:70px; height:40px;  margin-left:auto; margin-right:10px">
+                    <div hidden="@SemiAuto" class="form-check form-switch" style="width:100%;height:100%;">
+                            <input disabled="@Auto" style="width:65px; height:30px" class=" form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked="@WaterSwitch" @onchange="()=>Switch(TempSwitch, !WaterSwitch, MistSwitch, LightSwitch, FanSwitch)">
+
+                    </div>
+                    <div hidden="@(!SemiAuto)" class="form-group" style="width:100%;height:100%;">
+
+                            <input value="@SemiSoilHumidity" onchange="@((ChangeEventArgs e)=>@Promjena(SemiTemp,Int32.Parse(e.Value.ToString()),SemiHumidity))" type="number" class="form-control" id="formGroupExampleInput">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card-border-radius " style="border:solid 2px green">
+                <div style="margin-left:10px">
+                    <div>
+                        <img src="images\humidity.png" style="height:30px" />
+                        <label>Air humidity</label>
+                        <label style="color:red; font-weight:600">@humidity %</label>
+                    </div>
+
+                    <div hidden="@(Manual)">
+                            <label style="color:rgb(0, 206, 209); margin-left:10px;">Recomended humidity: @currentCrop.Humidity %</label>
+                    </div>
+                </div>
+
+                <div style="width:70px; height:40px;  margin-left:auto; margin-right:10px">
+                    <div hidden="@SemiAuto" class="form-check form-switch" style="width:100%;height:100%;">
+                            <input disabled="@Auto" style="width:65px; height:30px" class=" form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked="@MistSwitch" @onchange="()=>Switch(TempSwitch, WaterSwitch, !MistSwitch, LightSwitch, FanSwitch)">
+
+                    </div>
+                    <div hidden="@(!SemiAuto)" class="form-group" style="width:100%;height:100%;">
+
+                            <input value="@SemiHumidity" onchange="@((ChangeEventArgs e)=>@Promjena(SemiTemp,SemiSoilHumidity,Int32.Parse(e.Value.ToString())))" type="number" class="form-control" id="formGroupExampleInput">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card-border-radius " style="border:solid 2px green">
+                <div style="margin-left:10px">
+                    <img src="images\air.png" style="height:30px" />
+                    <label>Fans</label>
+                </div>
+
+                <div style="width:70px; height:40px;  margin-left:auto; margin-right:10px">
+                    <div class="form-check form-switch" style="width:100%;height:100%;">
+                            <input disabled="@Auto || @SemiAuto" style="width:65px; height:30px" class=" form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked="@FanSwitch" @onchange="()=>Switch(TempSwitch, WaterSwitch, MistSwitch, LightSwitch, !FanSwitch)">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+
+</MudSwipeArea>
+
+
+@code {
+
+    SwipeDirection _swipeDirection;
+    IFirebaseConfig configg;
+
+    int SemiTemp=2;
+    int SemiHumidity = 2;
+    int SemiSoilHumidity = 2;
+
+    bool TempSwitch;
+    bool LightSwitch;
+    bool FanSwitch;
+    bool MistSwitch;
+    bool WaterSwitch;
+
+    bool Auto;
+    bool SemiAuto=false;
+    bool Manual;
+
+    int tempValue;
+    int soilHumidity;
+    int humidity;
+
+    SelectedCrop currentCrop;
+
+
+    string Message = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+#if ANDROID
+    if (!SeedStarter.Platforms.Android.AndroidServiceManager.IsRunning)
+    {
+    SeedStarter.Platforms.Android.AndroidServiceManager.StartMyService();
+    Message = "Service has started";
+    }
+    else{
+    Message = "Service is running";
+    }
+#endif
+
+        await StartupOne();
+        await StartupTwo();
+
+        GetValues();
+
+    }
+
+    Task StartupOne()
+    {
+        configg = new FirebaseConfig()
+            {
+                AuthSecret = "9kYvaeMdIRNFA0WmoNqyCv4rBapIGyCDOptrQIyF",
+                BasePath = "https://seedstarter-f9b21-default-rtdb.europe-west1.firebasedatabase.app/"
+            };
+
+        return Task.CompletedTask;
+    }
+
+    IFirebaseClient client;
+
+    Task StartupTwo()
+    {
+        client = new FireSharp.FirebaseClient(configg);
+
+
+        GetModes();
+        GetCurrentCrop();
+        GetSemiValues();
+        StateHasChanged();
+
+        return Task.CompletedTask;
+
+    }
+
+    void GetSemiValues()
+    {
+        FirebaseResponse res = client.Get("SemiValues");
+        Dictionary<string, int> values = JsonConvert.DeserializeObject<Dictionary<string, int>>(res.Body.ToString());
+        SemiTemp = values.Where(x => x.Key == "Temp").First().Value;
+        SemiHumidity = values.Where(x => x.Key == "Humidity").First().Value;
+        SemiSoilHumidity = values.Where(x => x.Key == "SoilHumidity").First().Value;
+    }
+
+    void GetControls()
+    {
+        var result = client.Get("Control");
+        Controls kontrole = result.ResultAs<Controls>();
+
+        GlobalValues.temp = kontrole.Temp;
+        GlobalValues.light = kontrole.Light;
+        GlobalValues.water = kontrole.Water;
+        GlobalValues.mist = kontrole.Mist;
+        GlobalValues.fan = kontrole.Fan;
+
+        TempSwitch = kontrole.Temp;
+        LightSwitch = kontrole.Light;
+        WaterSwitch = kontrole.Water;
+        MistSwitch = kontrole.Mist;
+        FanSwitch = kontrole.Fan;
+
+        StateHasChanged();
+
+    }
+
+    void GetModes()
+    {
+        FirebaseResponse res = client.Get("Mode");
+        Dictionary<string, bool> modes = JsonConvert.DeserializeObject<Dictionary<string, bool>>(res.Body.ToString());
+        GlobalValues.Manual = modes.Where(x => x.Key == "Manual").First().Value;
+        GlobalValues.SemiAuto = modes.Where(x => x.Key == "SemiAuto").First().Value;
+        GlobalValues.Auto = modes.Where(x => x.Key == "Auto").First().Value;
+
+        Manual = modes.Where(x => x.Key == "Manual").First().Value;
+        SemiAuto = modes.Where(x => x.Key == "SemiAuto").First().Value;
+        Auto = modes.Where(x => x.Key == "Auto").First().Value;
+
+        // if(GlobalValues.Manual==true)
+        // {
+        //     GlobalValues.clrManual = GlobalValues.clrOn;
+        // }
+        // else if(GlobalValues.SemiAuto==true)
+        // {
+        //     GlobalValues.clrSemiAuto = GlobalValues.clrOn;
+        // }
+        // else
+        //     GlobalValues.clrAuto = GlobalValues.clrOn;
+
+        StateHasChanged();
+
+    }
+
+    void GetCurrentCrop()
+    {
+        FirebaseResponse res = client.Get("Selected/Crop");
+        GlobalValues.values = res.ResultAs<SelectedCrop>();
+
+        currentCrop = res.ResultAs<SelectedCrop>();
+    }
+
+    public async void GetValues()
+    {
+        while (true)
+        {
+            var tempVal = await client.GetAsync("Status/Temperature");
+            tempValue = int.Parse(tempVal.Body);
+            var humidityVal = await client.GetAsync("Status/Humidity");
+            humidity = int.Parse(humidityVal.Body);
+            var soilHumidityVal = await client.GetAsync("Status/GroundHumidity");
+            soilHumidity = int.Parse(soilHumidityVal.Body);
+
+            StateHasChanged();
+
+            await Task.Delay(5000);
+        }
+    }
+
+    void Promjena(int temp, int soilh, int humidity)
+    {
+        var setter = client.Update("SemiValues", new
+        {
+            Humidity=humidity,
+            SoilHumidity = soilh,
+            Temp=temp
+        });
+
+        GetSemiValues();
+    }
+
+
+
+    bool decoy = false;
+    private void Chng(SwipeEventArgs a)
+    {
+        if(a.SwipeDirection.ToString()=="RightToLeft")
+        {
+            navigationManager.NavigateTo("/Monitor");
+        }
+    }
+
+    void Switch(bool temp, bool water, bool mist, bool light, bool fan)
+    {
+        var setter = client.Update("Control", new
+        {
+            Fan = fan,
+            Light = light,
+            Mist = mist,
+            Temp = temp,
+            Water = water
+        });
+
+        GetControls();
+    }
+
+   
+
+}
