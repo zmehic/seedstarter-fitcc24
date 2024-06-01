@@ -1,10 +1,10 @@
 # seedstarter
-SeedStarter represents a system which contains a mobile application and an inubator for seedling development.
+SeedStarter is a system which contains a mobile application and an incubator for seedling development. 
 
 ## Functionalities
 
 ### Mobile App
-Mobile app is focused on monitoring values of key parameters such as humidity, air humidity, temperature, etc. These parameters can all be altered by clicking a button in the app.
+Mobile app is focused on monitoring values of key parameters such as humidity, air humidity, temperature, etc. These parameters can all be altered by clicking a button in the app. You can check out the presentation via the [link](https://drive.google.com/file/d/1ijQMpnZVeEkiDuBct7sAJj89qK3kV6y_/view?usp=sharing)
 
 <p align="center">
   <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/df7aff81-5771-46b1-881a-166c4264e7f0" alt="Test management" width="400" height="900">
