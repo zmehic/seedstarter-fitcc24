@@ -28,6 +28,17 @@ Mobile app is focused on monitoring values of key parameters such as humidity, a
 ### Incubator
 Incubator contains all of the necesarry sensors and gadgeds needed to control and monitor these key parameters.
 
+**Components:**
+- DHT11 Sensor for Air Humidity and Temperature;
+- Two 12v Fans;
+- Ultrasonic Mist Maker;
+- PTC Heater Element;
+- 8 Channel Relay Board;
+- NodeMcu ESP8266 ESP-12E;
+- Led Grow Waterproof Light Strip;
+- LM7805 Voltage Regulator;
+- Soil Hygrometer Detection Module;
+
 <p align="center">
   <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/b6f5d8ad-cce8-4e95-94b3-87456302f521" alt="Test management" width="800" height="400">
 </p>
