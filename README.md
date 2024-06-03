@@ -1,10 +1,10 @@
 # seedstarter
-SeedStarter is a system which contains a mobile application and an incubator for seedling development. 
+SeedStarter is a complete system that contains a mobile/desktop application developed in .NET MAUI and an incubator for seedling development controlled by an ESP 8266 microcontroller. 
 
 ## Functionalities
 
 ### Mobile App
-Mobile app is focused on monitoring values of key parameters such as humidity, air humidity, temperature, etc. These parameters can all be altered by clicking a button in the app. You can check out the presentation via the [link](https://drive.google.com/file/d/1ijQMpnZVeEkiDuBct7sAJj89qK3kV6y_/view?usp=sharing)
+Mobile app is focused on monitoring values of key parameters such as humidity, air humidity, temperature, etc. These parameters can all be altered by a simple click of a button in the app. You can check out the presentation via the [link](https://drive.google.com/file/d/1ijQMpnZVeEkiDuBct7sAJj89qK3kV6y_/view?usp=sharing)
 
 <p align="center">
   <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/df7aff81-5771-46b1-881a-166c4264e7f0" alt="Test management" width="400" height="900">
@@ -19,7 +19,7 @@ Mobile app is focused on monitoring values of key parameters such as humidity, a
 
 
 ### Incubator
-Incubator contains all of the necesarry sensors and gadgeds needed to control and monitor these key parameters.
+Incubator contains all of the necesarry sensors and gadgets needed to control and monitor these key parameters.
 
 **Components:**
 - DHT11 Sensor for Air Humidity and Temperature;
@@ -39,4 +39,4 @@ Incubator contains all of the necesarry sensors and gadgeds needed to control an
 
 
 ## Conclusion
-This project aims make the lives of farmers and other peple which spend a lot of their time monitoring and controlling the environment for seedling production.
+This project's aim is to make the lives of farmers and other peple who spend a lot of their time monitoring and controlling the environment for seedling production much easier.
