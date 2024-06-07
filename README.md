@@ -1,10 +1,15 @@
 # seedstarter
-SeedStarter is a complete system that contains a mobile/desktop application developed in .NET MAUI and an incubator for seedling development controlled by an ESP 8266 microcontroller. 
+SeedStarter is a project that I've worked on during my third year of studies at the Faculty of Information Technologies in Mostar. It was a result of combining two seminar papers from the 5th semester of my studies, specifically "Design and development of Internet of Things projects" by prof. Elmir Babović (Result being a seedling incubator) and "Human-computer interaction" by prof. Dušanka Bošković (Result being a .NET MAUI cross-platform application). With a little bit of aditional work I was able to complete the project and present it at the 2024 edition of our FIT Coding Challenge. I wasn't fortunate enough to make it into top three projects, but I'm glad that I've had the opportunity to present my work at such high level.
+
+On the other hand, my colleagues from the team "Spinewise" were fenomenal during the whole competition and they secured the 1st place there. Feel free to check out theit project via the [link](https://github.com/ArminDjidelija/fitcc24-spinewise).
+
+## Description
+The SeedStarter project contains both software and hardware part that are needed to access all of the capabilities it provides. Both of these parts work together to help the user with monitoring and control of the four key parameters for plant development—temperature, soil humidity, air humidity and light. These parameters are a crucial aspect for proper plant development in their early stages and need to be monitored on a regular level. This monitoring is acomplished with 2 sensors contained in the incubator, while their control is acomblished by implementing 4 types of gadgets for their control.
 
 ## Functionalities
 
 ### Mobile App
-Mobile app is focused on monitoring values of key parameters such as humidity, air humidity, temperature, etc. These parameters can all be altered by a simple click of a button in the app. You can check out the presentation via the [link](https://drive.google.com/file/d/1ijQMpnZVeEkiDuBct7sAJj89qK3kV6y_/view?usp=sharing)
+Mobile app was built based on the designed made by my colleague [Ensar Čevra](https://github.com/EnsarCevra) and I while working on our seminar paper for "Human-computer interaction" subject. It follows some of the basic design patterns that are contained in the ["Designing Interfaces: Patterns for Effective Interaction Design"](https://www.amazon.com/Designing-Interfaces-Patterns-Effective-Interaction/dp/1492051969) by Jenifer Tidwell, Charles Brewer, Aynne Valencia. Mobile application is responsible for visually informing the user about the values of key parameters from inside the incubator, and it is also responsible for giving the user an option to turn on the gadgets responsible for parameter control inside the incubator.
 
 <p align="center">
   <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/df7aff81-5771-46b1-881a-166c4264e7f0" alt="Test management" width="400" height="900">
@@ -16,7 +21,11 @@ Mobile app is focused on monitoring values of key parameters such as humidity, a
   <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/cb27a377-37ad-4bc4-947c-d094082d8a75" alt="Test management" width="400" height="900">
 </p>
 
-
+The application itself contains four destinct pages:
+- Home page - which contains all of the information and controlls the user needs to start using the system. This approach follows the "Direct Mobile Access" design pattern;
+- Monitor - which is currently not implemented, should give livestream video from inside the incubator itself;
+- Statistics - which gives the user an ability to search into past values of key parameters; (With detailed statistics for each parameter);
+- Settings - which gives the user an ability to choose from three different operation modes and to insert the type of seedling they are trying to grow;
 
 ### Incubator
 Incubator contains all of the necesarry sensors and gadgets needed to control and monitor these key parameters.
