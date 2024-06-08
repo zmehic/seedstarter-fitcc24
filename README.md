@@ -25,7 +25,7 @@ The application itself contains four destinct pages:
 - Settings - which gives the user an ability to choose from three different operation modes and to insert the type of seedling they are trying to grow;
 
 ### Incubator
-Incubator contains all of the necesarry sensors and gadgets needed to control and monitor these key parameters.
+Incubator contains all of the necesarry sensors and gadgets needed to control and monitor these key parameters mentioned above. Everything is controlled via an ESP8266 NodeMCU microcontroller.
 
 **Components:**
 - DHT11 Sensor for Air Humidity and Temperature;
@@ -39,10 +39,12 @@ Incubator contains all of the necesarry sensors and gadgets needed to control an
 - Soil Hygrometer Detection Module;
 
 <p align="center">
-  <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/b6f5d8ad-cce8-4e95-94b3-87456302f521" alt="Test management" width="800" height="400">
+  <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/b6f5d8ad-cce8-4e95-94b3-87456302f521" alt="Test management" width="750" height="400">
 </p>
 
 
+## Presentation
+**Coming soon**
 
 ## Conclusion
-This project's aim is to make the lives of farmers and other peple who spend a lot of their time monitoring and controlling the environment for seedling production much easier.
+In today's day and age, we wish to automate most of our everyday tasks in favour of time we can spend doing other things usefull. This project removes the need to spend time around your seedlings by automating the control of the key parameters in the incubator.  
