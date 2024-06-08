@@ -12,10 +12,10 @@ The SeedStarter project contains both software and hardware part that are needed
 Mobile app was built based on the designed made by my colleague [Ensar Čevra](https://github.com/EnsarCevra) and I while working on our seminar paper for "Human-computer interaction" subject. It follows some of the basic design patterns that are contained in the ["Designing Interfaces: Patterns for Effective Interaction Design"](https://www.amazon.com/Designing-Interfaces-Patterns-Effective-Interaction/dp/1492051969) by Jenifer Tidwell, Charles Brewer, Aynne Valencia. Mobile application is responsible for visually informing the user about the values of key parameters from inside the incubator, and it is also responsible for giving the user an option to turn on the gadgets responsible for parameter control inside the incubator.
 
 <p align="center">
-  <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/df7aff81-5771-46b1-881a-166c4264e7f0" alt="Test management" width="240" height="540">
-  <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/67899634-43ee-4acb-b632-e7231171c70e" alt="Test management" width="240" height="540">
-  <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/60acff1d-6ab9-4a75-94b9-cc6237676e33" alt="Test management" width="240" height="540">
-  <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/cb27a377-37ad-4bc4-947c-d094082d8a75" alt="Test management" width="240" height="540">
+  <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/df7aff81-5771-46b1-881a-166c4264e7f0" alt="Test management" width="235" height="540">
+  <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/67899634-43ee-4acb-b632-e7231171c70e" alt="Test management" width="235" height="540">
+  <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/60acff1d-6ab9-4a75-94b9-cc6237676e33" alt="Test management" width="235" height="540">
+  <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/cb27a377-37ad-4bc4-947c-d094082d8a75" alt="Test management" width="235" height="540">
 </p>
 
 The application itself contains four destinct pages:
