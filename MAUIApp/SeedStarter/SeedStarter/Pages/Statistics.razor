@@ -221,7 +221,9 @@
         GetDataSet();
 
         int counter = 0;
-        foreach (var item in DataSet)
+
+        var last5Elements = DataSet.Skip(Math.Max(0, DataSet.Count - 5)).Take(5);
+        foreach (var item in last5Elements)
         {
             if(counter>4)
             {

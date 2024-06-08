@@ -164,8 +164,11 @@
         {
             varijable[1].Add(new StanjeTemperature { vrijednost=item.Value.Temp, datum=DateTimeFix(item.Value.DateTime)});
             varijable[2].Add(new StanjeVlaznostiTla { vrijednost = item.Value.SoilHumidity, datum = DateTimeFix(item.Value.DateTime) });
-            varijable[3].Add(new StanjeVlaznostiZraka { vrijednost = item.Value.SoilHumidity, datum = DateTimeFix(item.Value.DateTime) });
+            varijable[3].Add(new StanjeVlaznostiZraka { vrijednost = item.Value.Humidity, datum = DateTimeFix(item.Value.DateTime) });
+            index++;
         }
+
+        index = index - 5;
 
         return Task.CompletedTask;
     }
@@ -209,7 +212,8 @@
 
         if (Number == 1 && varijable[1].Count>0)
         {
-            odabranaStatistika = varijable[1].Skip(index).Take(window).ToList();
+            //var last5Elements = myDict.
+            odabranaStatistika = varijable[1].Skip(Math.Max(0, varijable[1].Count - 5)).Take(5).ToList();
             values.Naziv = "Temperatura °C";
             values.Mesurement = "°C";
             values.Average = IzracunajProsjek();
@@ -219,7 +223,7 @@
         }
         else if (Number == 2 && varijable[1].Count > 0 )
         {
-            odabranaStatistika = varijable[2].Skip(index).Take(window).ToList();
+            odabranaStatistika = varijable[2].Skip(Math.Max(0, varijable[2].Count - 5)).Take(5).ToList();
             values.Naziv = "Soil humidity";
             values.Mesurement = "%";
             values.Average = IzracunajProsjek();
@@ -228,7 +232,7 @@
         }
         else if (Number == 3 && varijable[1].Count > 0)
         {
-            odabranaStatistika = varijable[3].Skip(index).Take(window).ToList();
+            odabranaStatistika = varijable[3].Skip(Math.Max(0, varijable[3].Count - 5)).Take(5).ToList();
             values.Naziv = "Air humidity";
             values.Mesurement = "%";
             values.Average = IzracunajProsjek();
@@ -287,7 +291,7 @@
 
     public async Task Lijevo()
     {
-        index = Math.Max(0, index - window);
+        index = Math.Max(0, index - 1);
         odabranaStatistika = varijable[Number].Skip(index).Take(window).ToList();
         values.DatumOd = (odabranaStatistika[0].datum).ToShortTimeString().ToString();
         values.DatumDo = (odabranaStatistika[odabranaStatistika.Count - 1].datum).ToShortTimeString().ToString();
@@ -298,7 +302,7 @@
 
     public async Task Desno()
     {
-        index = Math.Min(varijable[Number].Count - window, index + window);
+        index = Math.Min(varijable[Number].Count - window, index + 1);
         odabranaStatistika = varijable[Number].Skip(index).Take(window).ToList();
         values.DatumOd = (odabranaStatistika[0].datum).ToShortTimeString().ToString();
         values.DatumDo = (odabranaStatistika[odabranaStatistika.Count - 1].datum).ToShortTimeString().ToString();
