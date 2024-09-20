@@ -37,6 +37,7 @@ Incubator contains all of the necesarry sensors and gadgets needed to control an
 - Led Grow Waterproof Light Strip;
 - LM7805 Voltage Regulator;
 - Soil Hygrometer Detection Module;
+- Water pump;
 
 <p align="center">
   <img src="https://github.com/zmehic/teachy-angular-asp.net/assets/60481114/b6f5d8ad-cce8-4e95-94b3-87456302f521" alt="Test management" width="750" height="400">
